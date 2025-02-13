@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat App - Enter Username</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e1e1e;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+        select, input, button {
+            margin-top: 10px;
+            padding: 10px;
+            width: 100%;
+            border-radius: 5px;
+            border: none;
+        }
+        button {
+            background: #007BFF;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to the Chat App!</h1>
+        <form method="POST" action="/">
+            <label for="username">Select or Enter Your Username:</label>
+            <select id="saved-users" onchange="setUsername(this.value)">
+                <option value="">Choose a profile</option>
+            </select>
+            <input type="text" id="username" name="username" placeholder="Enter your username" required>
+            <button type="submit">Join Chat</button>
+        </form>
+    </div>
+
+    <script>
+        // Load saved usernames from local storage
+        const savedUsers = JSON.parse(localStorage.getItem("savedUsers")) || [];
+        const savedUsersDropdown = document.getElementById("saved-users");
+        const usernameInput = document.getElementById("username");
+
+        function setUsername(name) {
+            usernameInput.value = name;
+        }
+
+        savedUsers.forEach(user => {
+            const option = document.createElement("option");
+            option.value = user;
+            option.textContent = user;
+            savedUsersDropdown.appendChild(option);
+        });
+
+        // Save username on form submit
+        document.querySelector("form").addEventListener("submit", function(event) {
+            const username = usernameInput.value.trim();
+            if (username && !savedUsers.includes(username)) {
+                savedUsers.push(username);
+                localStorage.setItem("savedUsers", JSON.stringify(savedUsers));
+            }
+        });
+    </script>
+</body>
+</html>
