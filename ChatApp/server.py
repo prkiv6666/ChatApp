@@ -1,6 +1,9 @@
 import eventlet
 eventlet.monkey_patch()  # Must be at the very top, before other imports
 
+from flask import Flask
+app = Flask(__name__)
+
 from flask import Flask, render_template, request, redirect, url_for, make_response
 from flask_socketio import SocketIO, join_room, leave_room
 from flask_sqlalchemy import SQLAlchemy
@@ -144,6 +147,18 @@ def handle_message(data):
         'message': message,
         'timestamp': datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
     }, room=room_name)
+
+    from flask import Flask
+
+    app = Flask(__name__)
+
+    @app.route("/")
+    def home():
+        return "Hello, Render!"
+
+    if __name__ == "__main__":
+        app.run(host="0.0.0.0", port=5000)
+
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
