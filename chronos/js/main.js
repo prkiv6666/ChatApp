@@ -1,109 +1,109 @@
-/* CHRONOS // TYPE-O — scroll choreography */
+/* CHRONOS // TYPE-O — scroll-driven disassembly engine
+   A tall .scrolly section pins a .stage; scroll progress (0..1) scrubs
+   through real watch photography: full case -> movement/tourbillon ->
+   balance. Layers cross-fade + scale to feel like one continuous push-in. */
 (function () {
   "use strict";
 
-  const nav        = document.getElementById("nav");
-  const scrollFill = document.querySelector(".scroll-fill");
-  const watch      = document.querySelector(".hero-watch");
-  const burger     = document.querySelector(".nav-burger");
-  const links      = document.querySelector(".nav-links");
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const lerp  = (a, b, t) => a + (b - a) * t;
+  // ramp: 0 before `from`, 0..1 across [from,to], 1 after
+  const ramp  = (p, from, to) => clamp((p - from) / (to - from), 0, 1);
+  // band: fades 0->1 over [inA,inB], holds 1, fades 1->0 over [outA,outB]
+  const band  = (p, inA, inB, outA, outB) =>
+    p < inA ? 0 : p < inB ? (p - inA) / (inB - inA)
+    : p <= outA ? 1 : p < outB ? 1 - (p - outA) / (outB - outA) : 0;
 
-  /* ---- tag reveal targets ---- */
-  const revealSelector = ".panel-kicker, .panel-h, .panel-lead, .stat, .spec-list, .meter, .order-h, .order-sub, .order-row";
-  document.querySelectorAll(revealSelector).forEach((el, i) => {
-    el.classList.add("reveal", "d" + ((i % 4) + 1));
-  });
+  const scrolly  = document.getElementById("story");
+  const layers   = [...document.querySelectorAll(".layer")];
+  const caps     = [...document.querySelectorAll(".cap")];
+  const hint     = document.getElementById("scrollHint");
+  const stepEl   = document.getElementById("stageStep");
+  const fill     = document.querySelector(".scroll-fill");
+  const nav      = document.getElementById("nav");
 
-  /* ---- intersection reveal ---- */
-  const io = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((e) => {
-        if (e.isIntersecting) {
-          e.target.classList.add("in");
-          // fire stat counter + meter when their panel enters
-          if (e.target.classList.contains("stat")) animateCount(e.target);
-          if (e.target.classList.contains("meter")) e.target.querySelector(".meter-fill").style.width = "100%";
-          io.unobserve(e.target);
-        }
-      });
-    },
-    { threshold: 0.25 }
-  );
-  document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+  const STEPS = ["01 — CASE", "02 — MOVEMENT", "03 — ROTATION", "04 — BALANCE"];
 
-  /* ---- count-up for the 4HZ stat ---- */
-  function animateCount(stat) {
-    const num = stat.querySelector(".stat-num");
-    if (!num) return;
-    const target = parseFloat(num.dataset.count || "0");
-    const dur = 1100;
-    const start = performance.now();
-    (function step(now) {
-      const p = Math.min((now - start) / dur, 1);
-      const eased = 1 - Math.pow(1 - p, 3);
-      num.textContent = Math.round(eased * target);
-      if (p < 1) requestAnimationFrame(step);
-    })(start);
+  let progress = 0, ticking = false;
+
+  function render() {
+    ticking = false;
+    const p = progress;
+
+    /* ---- L0: full watch, zooms in then dissolves into the movement ---- */
+    const op0 = 1 - ramp(p, 0.18, 0.30);
+    setLayer(layers[0], op0, lerp(1, 2.6, ramp(p, 0, 0.30)), 50);
+
+    /* ---- L1: movement + tourbillon. Lives across MOVEMENT + ROTATION,
+            panning from centre toward the tourbillon as it zooms. ---- */
+    const op1 = band(p, 0.18, 0.30, 0.60, 0.70);
+    const panX = lerp(45, 70, ramp(p, 0.30, 0.68));   // % object-position
+    setLayer(layers[1], op1, lerp(1.05, 2.1, ramp(p, 0.18, 0.70)), panX);
+
+    /* ---- L2: balance close-up, the finale ---- */
+    const op2 = ramp(p, 0.60, 0.72);
+    setLayer(layers[2], op2, lerp(1.1, 1.7, ramp(p, 0.60, 1)), 50);
+
+    /* ---- captions ---- */
+    setCap(caps[0], 1 - ramp(p, 0.10, 0.17), p, 0.10);
+    setCap(caps[1], band(p, 0.22, 0.30, 0.42, 0.48), p, 0.30);
+    setCap(caps[2], band(p, 0.48, 0.55, 0.64, 0.70), p, 0.55);
+    setCap(caps[3], ramp(p, 0.74, 0.80) * (1 - ramp(p, 0.97, 1)), p, 0.80);
+
+    /* ---- stage chrome ---- */
+    if (hint)  hint.style.opacity = String(1 - ramp(p, 0, 0.05));
+    if (stepEl) {
+      const idx = p < 0.22 ? 0 : p < 0.48 ? 1 : p < 0.72 ? 2 : 3;
+      if (stepEl.textContent !== STEPS[idx]) stepEl.textContent = STEPS[idx];
+    }
   }
 
-  /* ---- scroll: progress bar, nav state, hero parallax ---- */
-  let ticking = false;
+  function setLayer(el, opacity, scale, panX) {
+    if (!el) return;
+    el.style.opacity = opacity.toFixed(3);
+    el.style.transform = `scale(${scale.toFixed(3)})`;
+    const img = el.firstElementChild;
+    if (img && panX != null) img.style.objectPosition = `${panX}% 50%`;
+  }
+  // tiny upward drift gives captions life as they cross their window
+  function setCap(el, opacity, p, centre) {
+    if (!el) return;
+    el.style.opacity = opacity.toFixed(3);
+    const drift = (p - centre) * -60; // px
+    const base = el.classList.contains("cap--center")
+      ? "translate(-50%,-50%)" : "translateY(-50%)";
+    el.style.transform = `${base} translateY(${drift.toFixed(1)}px)`;
+  }
+
   function onScroll() {
     if (ticking) return;
     ticking = true;
     requestAnimationFrame(() => {
-      const y = window.scrollY;
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      if (scrollFill) scrollFill.style.width = (max > 0 ? (y / max) * 100 : 0) + "%";
+      const rect = scrolly.getBoundingClientRect();
+      const total = scrolly.offsetHeight - window.innerHeight;
+      progress = clamp(-rect.top / total, 0, 1);
 
-      nav.classList.toggle("scrolled", y > 60);
+      const docMax = document.documentElement.scrollHeight - window.innerHeight;
+      if (fill) fill.style.width = (docMax > 0 ? (window.scrollY / docMax) * 100 : 0) + "%";
+      nav.classList.toggle("scrolled", window.scrollY > 60);
 
-      // hero watch drifts up + scales slightly as you leave the hero
-      if (watch && y < window.innerHeight) {
-        const t = y / window.innerHeight;
-        watch.style.transform =
-          `translate(-50%, calc(-50% - ${t * 120}px)) scale(${1 - t * 0.12})`;
-        watch.style.opacity = String(1 - t * 0.65);
-      }
-      ticking = false;
+      render();
     });
   }
+
   window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll);
   onScroll();
 
-  /* ---- subtle watch tilt toward cursor (desktop) ---- */
-  const wrap = document.querySelector(".watch-wrap");
-  if (wrap && window.matchMedia("(pointer:fine)").matches) {
-    window.addEventListener("mousemove", (e) => {
-      const rx = (e.clientY / window.innerHeight - 0.5) * -10;
-      const ry = (e.clientX / window.innerWidth - 0.5) * 10;
-      wrap.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg)`;
-    });
-  }
-
-  /* ---- mobile menu ---- */
+  /* mobile menu */
+  const burger = document.querySelector(".nav-burger");
+  const links  = document.querySelector(".nav-links");
   if (burger && links) {
     burger.addEventListener("click", () => {
       const open = links.style.display === "flex";
-      links.style.cssText = open
-        ? ""
-        : "display:flex;position:fixed;inset:64px 0 auto 0;flex-direction:column;gap:22px;align-items:center;padding:32px;background:rgba(7,8,11,.96);backdrop-filter:blur(14px);z-index:71;";
+      links.style.cssText = open ? "" :
+        "display:flex;position:fixed;inset:64px 0 auto 0;flex-direction:column;gap:22px;align-items:center;padding:32px;background:rgba(7,8,11,.96);backdrop-filter:blur(14px);z-index:71;";
     });
-    links.querySelectorAll("a").forEach((a) =>
-      a.addEventListener("click", () => (links.style.cssText = ""))
-    );
+    links.querySelectorAll("a").forEach(a => a.addEventListener("click", () => (links.style.cssText = "")));
   }
-
-  /* ---- animate watch hands continuously ---- */
-  const hands = document.querySelector(".w-hands");
-  const tourb = document.querySelector(".w-tourb");
-  const gear  = document.querySelector(".w-gear");
-  let a = 0;
-  (function tick() {
-    a += 0.4;
-    if (hands) hands.style.transform = `rotate(${a}deg)`;
-    if (tourb) tourb.style.transform = `rotate(${-a * 3}deg)`;
-    if (gear)  gear.style.transform  = `rotate(${a * 2}deg)`;
-    requestAnimationFrame(tick);
-  })();
 })();
