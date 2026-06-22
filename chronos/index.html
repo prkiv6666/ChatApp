@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CHRONOS // TYPE-O — Swiss Metallic Balance</title>
+<meta name="description" content="CHRONOS TYPE-O. A skeleton tourbillon engineered around a 4HZ metallic balance. Swiss precision, rendered." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;600;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<!-- grain + vignette overlays -->
+<div class="grain" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+
+<!-- scroll progress -->
+<div class="scroll-rail" aria-hidden="true"><span class="scroll-fill"></span></div>
+
+<!-- HUD frame -->
+<div class="hud" aria-hidden="true">
+  <span class="hud-corner tl"></span>
+  <span class="hud-corner tr"></span>
+  <span class="hud-corner bl"></span>
+  <span class="hud-corner br"></span>
+  <span class="hud-vtext left">CAL. T-0 · SWISS MADE · 28'800 VPH</span>
+  <span class="hud-vtext right">SERIAL № 00041 / 250 · METALLIC BALANCE</span>
+</div>
+
+<!-- NAV -->
+<header class="nav" id="nav">
+  <a class="brand" href="#hero">
+    <span class="brand-mark">CHRONOS</span>
+    <span class="brand-sub">HAUTE HORLOGERIE</span>
+  </a>
+  <nav class="nav-links">
+    <a href="#movement">CRAFT</a>
+    <a href="#rotation">TECHNOLOGY</a>
+    <a href="#balance">CALIBER</a>
+    <a href="#order" class="nav-cta">ORDER</a>
+  </nav>
+  <button class="nav-burger" aria-label="Menu"><span></span><span></span></button>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-watch" data-parallax="0.12">
+    <!-- watch injected via include below -->
+    <div class="watch-wrap" id="watchMount"></div>
+  </div>
+  <div class="hero-copy">
+    <h1 class="hero-title"><span>CHRONOS</span> <i>//</i> <span>TYPE-O</span></h1>
+    <p class="hero-tag">SWISS METALLIC BALANCE</p>
+  </div>
+  <div class="hero-foot">
+    <span>EST. GENÈVE · MMXIV</span>
+    <span class="scroll-hint">SCROLL TO REVEAL <em></em></span>
+    <span>SKELETON TOURBILLON · T-0</span>
+  </div>
+</section>
+
+<!-- 01 MOVEMENT / 4HZ -->
+<section class="panel panel--movement" id="movement" data-index="01">
+  <div class="panel-bg movement-bg"></div>
+  <div class="panel-grid">
+    <span class="panel-kicker">SPECIFICATIONS // 4HZ MOVEMENT</span>
+    <div class="stat">
+      <span class="stat-num" data-count="4">4</span><span class="stat-unit">HZ</span>
+    </div>
+    <p class="panel-lead">A high-frequency oscillator beating <strong>28,800 vibrations per hour</strong>. Every tick is a measured act of restraint — the heart of the TYPE-O caliber, cut from a single block of hardened steel.</p>
+    <ul class="spec-list">
+      <li><b>POWER RESERVE</b><span>72 HOURS</span></li>
+      <li><b>JEWELS</b><span>31</span></li>
+      <li><b>COMPONENTS</b><span>284</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- 02 ROTATION -->
+<section class="panel panel--rotation" id="rotation" data-index="02">
+  <div class="panel-bg rotation-bg">
+    <div class="gear-cluster">
+      <svg class="gear g1" viewBox="0 0 100 100"><use href="#gear"/></svg>
+      <svg class="gear g2" viewBox="0 0 100 100"><use href="#gear"/></svg>
+      <svg class="gear g3" viewBox="0 0 100 100"><use href="#gear"/></svg>
+    </div>
+  </div>
+  <div class="panel-grid right">
+    <span class="panel-kicker">SPECIFICATIONS // 02. ROTATION</span>
+    <h2 class="panel-h">PERPETUAL<br/>MOTION</h2>
+    <p class="panel-lead">The flying tourbillon completes one full rotation every sixty seconds, averaging out the pull of gravity. Watch it turn — the cage is suspended on a single bridge, weightless to the eye.</p>
+    <div class="meter"><span class="meter-fill"></span><b class="meter-label">60s / REV</b></div>
+  </div>
+</section>
+
+<!-- 03 BALANCE -->
+<section class="panel panel--balance" id="balance" data-index="03">
+  <div class="panel-bg balance-bg">
+    <div class="spring">
+      <span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
+  </div>
+  <div class="panel-grid center">
+    <span class="panel-kicker">03. CALIBER BALANCE</span>
+    <h2 class="panel-h glow">METALLIC<br/>BALANCE</h2>
+    <p class="panel-lead">A free-sprung balance wheel, temperature-compensated and tuned by hand. The hairspring breathes in perfect concentric arcs — the difference between a watch that keeps time and one that <em>commands</em> it.</p>
+    <span class="panel-kicker faint">– 1 / + 2 SEC / DAY · COSC CERTIFIED</span>
+  </div>
+</section>
+
+<!-- ORDER / CTA -->
+<section class="order" id="order">
+  <div class="order-inner">
+    <span class="panel-kicker">CHRONOS // TYPE-O</span>
+    <h2 class="order-h">OWN THE<br/>MECHANISM</h2>
+    <p class="order-sub">Limited to 250 pieces worldwide. Each numbered, each certified, each yours alone.</p>
+    <div class="order-row">
+      <span class="order-price">CHF 48,500</span>
+      <a class="btn" href="#hero">REQUEST AN ALLOCATION</a>
+    </div>
+  </div>
+  <footer class="footer">
+    <span>© MMXIV–MMXXVI CHRONOS HAUTE HORLOGERIE</span>
+    <span>GENÈVE · SWISS MADE</span>
+  </footer>
+</section>
+
+<!-- shared svg defs -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <g id="gear">
+      <path d="M50 8 l4 0 2 10 a34 34 0 0 1 9 3.7 l8.5-6 3 2.8 -6 8.5 a34 34 0 0 1 3.7 9 l10 2 0 4 -10 2 a34 34 0 0 1 -3.7 9 l6 8.5 -2.8 3 -8.5-6 a34 34 0 0 1 -9 3.7 l-2 10 -4 0 -2-10 a34 34 0 0 1 -9 -3.7 l-8.5 6 -3-2.8 6-8.5 a34 34 0 0 1 -3.7 -9 l-10-2 0-4 10-2 a34 34 0 0 1 3.7 -9 l-6-8.5 2.8-3 8.5 6 a34 34 0 0 1 9 -3.7 z" />
+      <circle cx="50" cy="50" r="14" class="gear-hub"/>
+    </g>
+  </defs>
+</svg>
+
+<script src="js/watch.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
